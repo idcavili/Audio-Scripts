@@ -1,5 +1,5 @@
 var phase = 0;
-var twoPi = 6.28;
+var twoPi = 6.28318531;
 var rate;
 module.exports = function(){
   return{
