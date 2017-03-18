@@ -17,6 +17,33 @@ var hf;
 var rmsPre;
 var rmsPost;
 function onInit(){
+  hpf[0] = new Hpf();
+  hpf[1] = new Hpf();
+  lpf[0] = new Lpf();
+  lpf[1] = new Lpf();
+  hs[0] = new Hsf();
+  hs[1] = new Hsf();
+  ls[0] = new Lsf();
+  ls[1] = new Lsf();
+  lf[0] = new Peq();
+  lf[1] = new Peq();
+  lmf[0] = new Peq();
+  lmf[1] = new Peq();
+  mf[0] = new Peq();
+  mf[1] = new Peq();
+  hmf[0] = new Peq();
+  hmf[1] = new Peq();
+  hf[0] = new Peq();
+  hf[1] = new Peq();
+  rmsPre[0] = new Rms();
+  rmsPre[1] = new Rms();
+  rmsPost[0] = new Rms();
+  rmsPost[1] = new Rms();
+  rmsPre[0].setWindowSize(0.3);
+  rmsPre[1].setWindowSize(0.3);
+  rmsPost[0].setWindowSize(0.3);
+  rmsPost[1].setWindowSize(0.3);
+  
   addInput(["in","l"]);
   addInput(["in","r"]);
   addOutput(["out","l"]);
@@ -198,32 +225,7 @@ function onInit(){
   setParameterCallback(["hf", "q"], setCoeff);
   setParameterValue(["hf", "q"], 0.5, true);
   
-  hpf[0] = new Hpf();
-  hpf[1] = new Hpf();
-  lpf[0] = new Lpf();
-  lpf[1] = new Lpf();
-  hs[0] = new Hsf();
-  hs[1] = new Hsf();
-  ls[0] = new Lsf();
-  ls[1] = new Lsf();
-  lf[0] = new Peq();
-  lf[1] = new Peq();
-  lmf[0] = new Peq();
-  lmf[1] = new Peq();
-  mf[0] = new Peq();
-  mf[1] = new Peq();
-  hmf[0] = new Peq();
-  hmf[1] = new Peq();
-  hf[0] = new Peq();
-  hf[1] = new Peq();
-  rmsPre[0] = new Rms();
-  rmsPre[1] = new Rms();
-  rmsPost[0] = new Rms();
-  rmsPost[1] = new Rms();
-  rmsPre[0].setWindowSize(0.3);
-  rmsPre[1].setWindowSize(0.3);
-  rmsPost[0].setWindowSize(0.3);
-  rmsPost[1].setWindowSize(0.3);
+  
 }
 
 function setCoeff(path, value){
