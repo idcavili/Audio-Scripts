@@ -3,7 +3,7 @@ var Lpf = require("lpf");
 var Hsf = require("hishelf");
 var Lsf = require("loshelf");
 var Peq = require("peq");
-var rms = require("rms");
+var Rms = require("rms");
 
 var hpf;
 var lpf;
@@ -216,12 +216,95 @@ function onInit(){
   hmf[1] = new Peq();
   hf[0] = new Peq();
   hf[1] = new Peq();
-  rmsPre[0] = new rms();
-  rmsPre[1] = new rms();
-  rmsPost[0] = new rms();
-  rmsPost[1] = new rms();
+  rmsPre[0] = new Rms();
+  rmsPre[1] = new Rms();
+  rmsPost[0] = new Rms();
+  rmsPost[1] = new Rms();
   rmsPre[0].setWindowSize(0.3);
   rmsPre[1].setWindowSize(0.3);
   rmsPost[0].setWindowSize(0.3);
   rmsPost[1].setWindowSize(0.3);
 }
+
+function setCoeff(path, value){
+  switch(path[0]){
+    case "hpf":
+      hpf.setCoeff(value);
+      break;
+    case "lpf":
+      lpf.setCoeff(value);
+      break;
+    case "hs":
+      hs.setCoeff(getParameter(["hs", "freq"]), getParameter(["hs", "gain"]));
+      break;
+    case "ls":
+      ls.setCoeff(getParameter(["ls", "freq"]), getParameter(["ls", "gain"]));
+      break;
+    case "lf":
+      lf.setCoeff(getParameter(["lf", "freq"]), getParameter(["lf", "q"]), getParameter(["lf", "gain"]));
+      break;
+    case "lmf":
+      lf.setCoeff(getParameter(["lmf", "freq"]), getParameter(["lmf", "q"]), getParameter(["lmf", "gain"]));
+      break;
+    case "mf":
+      mf.setCoeff(getParameter(["mf", "freq"]), getParameter(["mf", "q"]), getParameter(["mf", "gain"]));
+      break;
+    case "hmf":
+      hmf.setCoeff(getParameter(["hmf", "freq"]), getParameter(["hmf", "q"]), getParameter(["hmf", "gain"]));
+      break;
+    case "hf":
+      hf.setCoeff(getParameter(["hf", "freq"]), getParameter(["hf", "q"]), getParameter(["hf", "gain"]));
+      break;
+    }
+          
+}
+
+function onSample(){
+  var buffer[0] = readSample("in", "l");
+  var buffer[1] = readSample("in", "r");
+  var rms = rmsPre[0].calculate(buffer[0]);
+  if(rms => 0){
+    setParameterValue("rms", "pre", "l", Math.pow(10, rms / 20), false);
+  }
+  var rms = rmsPre[1].calculate(buffer[1]);
+  if(rms => 0){
+    setParameterValue("rms", "pre", "r", Math.pow(10, rms / 20), false);
+  }
+  if(getParameter(["hpf", "bypass"]) == 0){
+    buffer[0] = hpf[0].process(buffer[0]);
+    buffer[1] = hpf[1].process(buffer[1]);
+  }
+  if(getParameter(["lpf", "bypass"]) == 0){
+    buffer[0] = lpf[0].process(buffer[0]);
+    buffer[1] = lpf[1].process(buffer[1]);
+  }
+  if(getParameter(["hs", "bypass"]) == 0){
+    buffer[0] = hs[0].process(buffer[0]);
+    buffer[1] = hs[1].process(buffer[1]);
+  }
+  if(getParameter(["ls", "bypass"]) == 0){
+    buffer[0] = ls[0].process(buffer[0]);
+    buffer[1] = ls[1].process(buffer[1]);
+  }
+  if(getParameter(["lf", "bypass"]) == 0){
+    buffer[0] = lf[0].process(buffer[0]);
+    buffer[1] = lf[1].process(buffer[1]);
+  }
+  if(getParameter(["lmf", "bypass"]) == 0){
+    buffer[0] = lmf[0].process(buffer[0]);
+    buffer[1] = lmf[1].process(buffer[1]);
+  }
+  if(getParameter(["mf", "bypass"]) == 0){
+    buffer[0] = mf[0].process(buffer[0]);
+    buffer[1] = mf[1].process(buffer[1]);
+  }
+  if(getParameter(["hmf", "bypass"]) == 0){
+    buffer[0] = hmf[0].process(buffer[0]);
+    buffer[1] = hmf[1].process(buffer[1]);
+  }
+  if(getParameter(["hf", "bypass"]) == 0){
+    buffer[0] = hf[0].process(buffer[0]);
+    buffer[1] = hf[1].process(buffer[1]);
+  }
+}
+
