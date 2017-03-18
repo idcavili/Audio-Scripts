@@ -237,14 +237,11 @@ function onSample(){
   var buffer[0] = readSample(["in", "l"]);
   var buffer[1] = readSample(["in", "r"]);
   var scBuffer;
-  var rms = rmsPre[0].calculate(buffer[0]);
-  if(rms => 0){
-    setParameterValue(["rms", "pre", "l"], Math.pow(10, rms / 20), true);
-  }
+  var rms;
+  rms = rmsPre[0].calculate(buffer[0]);
+  setParameterValue(["rms", "pre", "l"], Math.pow(10, rms / 20), true);
   rms = rmsPre[1].calculate(buffer[1]);
-  if(rms => 0){
-    setParameterValue(["rms", "pre", "r"], Math.pow(10, rms / 20), true);
-  }
+  setParameterValue(["rms", "pre", "r"], Math.pow(10, rms / 20), true);
   if(getParameter(["hpf", "sw"]) == 1){
     buffer[0] = hpf[0].process(buffer[0]);
     buffer[1] = hpf[1].process(buffer[1]);
@@ -269,13 +266,9 @@ function onSample(){
     scBuffer[1] = scLpf[1].process(scBuffer[1]);
   }
   rms = rmsSC[0].calculate(scBuffer[0]);
-  if(rms => 0){
-    setParameterValue(["rms", "sc", "l"], Math.pow(10, rms / 20), true);
-  }
+  setParameterValue(["rms", "sc", "l"], Math.pow(10, rms / 20), true);
   rms = rmsSC[1].calculate(scBuffer[1]);
-  if(rms => 0){
-    setParameterValue(["rms", "sc", "r"], Math.pow(10, rms / 20), true);
-  }
+  setParameterValue(["rms", "sc", "r"], Math.pow(10, rms / 20), true);
   if(getParameter(["sc", "listen"]) == 1){
     writeSample(["sc", "listen", "l"], scBuffer[0]);
     writeSample(["sc", "listen", "r"], scBuffer[1]);
@@ -313,13 +306,9 @@ function onSample(){
      buffer[1] = readSample(["in", "r"]);
   }
   rms = rmsPost[0].calculate(buffer[0]);
-  if(rms => 0){
-    setParameterValue(["rms", "post", "l"], Math.pow(10, rms / 20), true);
-  }
+  setParameterValue(["rms", "post", "l"], Math.pow(10, rms / 20), true);
   rms = rmsPost[1].calculate(buffer[1]);
-  if(rms => 0){
-    setParameterValue(["rms", "post", "r"], Math.pow(10, rms / 20), true);
-  }
+  setParameterValue(["rms", "post", "r"], Math.pow(10, rms / 20), true);
   writeSample(["out", "l"], buffer[0]);
   writeSample(["out", "r"], buffer[1]);
 }
