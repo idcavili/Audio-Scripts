@@ -1,6 +1,6 @@
 var Comp = require("comp");
 var Hpf = require("hpf");
-var Lpf = require("lfp");
+var Lpf = require("lpf");
 var Rms = require("rms");
 
 var comp;
@@ -139,7 +139,7 @@ function onInit(){
     bpHpf[0].setCoeff(value);
     bpHpf[1].setCoeff(value);
   });
-  setParameterValue(["lpf", "freq"], 20000);
+  setParameterValue(["lpf", "freq"], 20000, true);
   
   addParameter(["sc", "ext"]);
   SetParameterType(["sc", "ext"], 1);
@@ -163,7 +163,7 @@ function onInit(){
     scHpf[0].setCoeff(value);
     scHpf[1].setCoeff(value);
   });
-  setParameterValue(["sc", "hpf", "freq"], 20);
+  setParameterValue(["sc", "hpf", "freq"], 20, true);
   
   addParameter(["sc", "lpf", "sw"]);
   setParameterType(["sc", "lpf", "sw"], 1);
@@ -177,7 +177,7 @@ function onInit(){
     scLpf[0].setCoeff(value);
     scLpf[1].setCoeff(value);
   });
-  setParameterValue(["sc", "lpf", "freq"], 20000);
+  setParameterValue(["sc", "lpf", "freq"], 20000, true);
   
   addParameter(["sc", "link"]);
   setParameterType(["sc", "link"], 1);
@@ -259,6 +259,14 @@ function onSample(){
   }else{
     scBuffer[0] = buffer[0];
     scBuffer[1] = buffer[1];
+  }
+  if(getParameter(["sc", "hpf", "sw"]) == 1){
+    scBuffer[0] = scHpf[0].process(scBuffer[0]);
+    scBuffer[1] = scHpf[1].process(scBuffer[1]);
+  }
+  if(getParameter(["sc", "lpf", "sw"]) == 1){
+    scBuffer[0] = scLpf[0].process(scBuffer[0]);
+    scBuffer[1] = scLpf[1].process(scBuffer[1]);
   }
   rms = rmsSC[0].calculate(scBuffer[0]);
   if(rms => 0){
