@@ -306,5 +306,19 @@ function onSample(){
     buffer[0] = hf[0].process(buffer[0]);
     buffer[1] = hf[1].process(buffer[1]);
   }
+  if(getParameter(["bypass"]) == 1){
+    buffer[0] = readSample(["in", "l"]);
+    buffer[1] = readSample(["in", "r"]);
+  }
+  var rms = rmsPost[0].calculate(buffer[0]);
+  if(rms => 0){
+    setParameterValue("rms", "post", "l", Math.pow(10, rms / 20), false);
+  }
+  var rms = rmsPost[1].calculate(buffer[1]);
+  if(rms => 0){
+    setParameterValue("rms", "post", "r", Math.pow(10, rms / 20), false);
+  }
+  writeSample(["out", "l"], buffer[0]);
+  writeSample(["out", "r"], buffer[1]);
 }
 
