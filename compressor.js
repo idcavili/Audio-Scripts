@@ -232,3 +232,87 @@ function onInit(){
   setParameterReadOnly(["gr", "r"], true);
   setParameterValue(["gr", "r"], -inf, true);
 }
+
+function onSample(){
+  var buffer[0] = readSample(["in", "l"]);
+  var buffer[1] = readSample(["in", "r"]);
+  var scBuffer;
+  var rms = rmsPre[0].calculate(buffer[0]);
+  if(rms => 0){
+    setParameterValue(["rms", "pre", "l"], Math.pow(10, rms / 20), true);
+  }
+  rms = rmsPre[1].calculate(buffer[1]);
+  if(rms => 0){
+    setParameterValue(["rms", "pre", "r"], Math.pow(10, rms / 20), true);
+  }
+  if(getParameter(["hpf", "sw"]) == 1){
+    buffer[0] = hpf[0].process(buffer[0]);
+    buffer[1] = hpf[1].process(buffer[1]);
+  }
+  if(getParameter(["lpf", "sw"]) == 1){
+    buffer[0] = lpf[0].process(buffer[0]);
+    buffer[1] = lpf[1].process(buffer[1]);
+  }
+  if(getParameter(["sc", "ext"]) == 1){
+    scBuffer[0] = readSample(["sc", "in", "l"]);
+    scBuffer[1] = readSample(["sc", "in", "r"]);
+  }else{
+    scBuffer[0] = buffer[0];
+    scBuffer[1] = buffer[1];
+  }
+  rms = rmsSC[0].calculate(scBuffer[0]);
+  if(rms => 0){
+    setParameterValue(["rms", "sc", "l"], Math.pow(10, rms / 20), true);
+  }
+  rms = rmsSC[1].calculate(scBuffer[1]);
+  if(rms => 0){
+    setParameterValue(["rms", "sc", "r"], Math.pow(10, rms / 20), true);
+  }
+  if(getParameter(["sc", "listen"]) == 1){
+    writeSample(["sc", "listen", "l"], scBuffer[0]);
+    writeSample(["sc", "listen", "r"], scBuffer[1]);
+  }else{
+    writeSample(["sc", "listen", "l"], 0);
+    writeSample(["sc", "listen", "r"], 0);
+  }
+  if(getParameter(["sc", "link"]) == 1){
+    scBuffer[0] = Math.max([scBuffer[0], scBuffer[1]]);
+    scBuffer[1] = scBuffer[0];
+  }
+  comp[0].processSC(scBuffer[0]);
+  comp[1].processSC(scBuffer[1]);
+  setParameterValue(["gr", "l"], comp[0].getGR());
+  setParameterValue(["gr", "r"], comp[1].getGR());
+  buffer[0] = comp[0].process(buffer[0]);
+  buffer[1] = comp[1].process(buffer[1]);
+  if(getParameter(["hpf", "sw"] == 1 || getParameter(["lpf", "sw"]) == 1){
+     var bpBuffer;
+     bpBuffer[0] = readSample(["in", "l"]);
+     bpBuffer[1] = readSample(["in", "r"]);
+     if(getParameter(["hpf", "sw"]) == 1){
+       bpBuffer[0] = bpLpf.process(bpBuffer[0]);
+       bpBuffer[1] = bpLpf.process(bpBuffer[1]);
+     }
+     if(getParameter(["lpf", "sw"]) == 1){
+       bpBuffer[0] = bpHpf.process(bpBuffer[0]);
+       bpBuffer[1] = bpHpf.process(bpBuffer[1]);
+     }
+     buffer[0] += bpBuffer[0];
+     buffer[1] += bpBuffer[1];
+  }
+  if(getParameter(["bypass"] == 1){
+     buffer[0] = readSample(["in", "l"]);
+     buffer[1] = readSample(["in", "r"]);
+  }
+  rms = rmsPost[0].calculate(buffer[0]);
+  if(rms => 0){
+    setParameterValue(["rms", "post", "l"], Math.pow(10, rms / 20), true);
+  }
+  rms = rmsPost[1].calculate(buffer[1]);
+  if(rms => 0){
+    setParameterValue(["rms", "post", "r"], Math.pow(10, rms / 20), true);
+  }
+  writeSample(["out", "l"], buffer[0]);
+  writeSample(["out", "r"], buffer[1]);
+}
+
