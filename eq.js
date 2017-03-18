@@ -264,14 +264,11 @@ function setCoeff(path, value){
 function onSample(){
   var buffer[0] = readSample("in", "l");
   var buffer[1] = readSample("in", "r");
-  var rms = rmsPre[0].calculate(buffer[0]);
-  if(rms => 0){
-    setParameterValue("rms", "pre", "l", Math.pow(10, rms / 20), false);
-  }
-  var rms = rmsPre[1].calculate(buffer[1]);
-  if(rms => 0){
-    setParameterValue("rms", "pre", "r", Math.pow(10, rms / 20), false);
-  }
+  var rms;
+  rms = rmsPre[0].calculate(buffer[0]);
+  setParameterValue("rms", "pre", "l", Math.pow(10, rms / 20), false);
+  rms = rmsPre[1].calculate(buffer[1]);
+  setParameterValue("rms", "pre", "r", Math.pow(10, rms / 20), false);
   if(getParameter(["hpf", "bypass"]) == 0){
     buffer[0] = hpf[0].process(buffer[0]);
     buffer[1] = hpf[1].process(buffer[1]);
@@ -312,14 +309,10 @@ function onSample(){
     buffer[0] = readSample(["in", "l"]);
     buffer[1] = readSample(["in", "r"]);
   }
-  var rms = rmsPost[0].calculate(buffer[0]);
-  if(rms => 0){
-    setParameterValue(["rms", "post", "l"], Math.pow(10, rms / 20), false);
-  }
-  var rms = rmsPost[1].calculate(buffer[1]);
-  if(rms => 0){
-    setParameterValue(["rms", "post", "r"], Math.pow(10, rms / 20), false);
-  }
+  rms = rmsPost[0].calculate(buffer[0]);
+  setParameterValue(["rms", "post", "l"], Math.pow(10, rms / 20), false);
+  rms = rmsPost[1].calculate(buffer[1]);
+  setParameterValue(["rms", "post", "r"], Math.pow(10, rms / 20), false);
   writeSample(["out", "l"], buffer[0]);
   writeSample(["out", "r"], buffer[1]);
 }
