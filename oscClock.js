@@ -5,13 +5,13 @@ module.exports = function(){
   return{
     setFreq:function(freq){
       this.rate = twoPi * freq / system.fs;
-     }
+     },
      getPhase:function(){
       return this.phase;
-     }
+     },
      setPhase:function(phase){
       this.phase = Math.floor(phase / this.rate) * this.rate:
-     }
+     },
      getNextValue:function(){
       if(this.phase == this.twoPi){
         this.phase = 0;
