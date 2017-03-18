@@ -55,8 +55,8 @@ function onInit(){
   addParameter(["hpf", "freq"]);
   setParameterType(["hpf", "freq"], 0);
   setParameterRange(["hpf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["hpf", "freq"], 20000, false);
   setParameterCallback(["hpf", "freq"], setCoeff);
+  setParameterValue(["hpf", "freq"], 20000, true);
   //LPF
   addParameter(["lpf", "bypass"]);
   setParameterType(["lpf", "bypass"], 1);
@@ -65,8 +65,8 @@ function onInit(){
   addParameter(["lpf", "freq"]);
   setParameterType(["lpf", "freq"], 0);
   setParameterRange(["lpf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["lpf", "freq"], 20, false);
   setParameterCallback(["lpf", "freq"], setCoeff);
+  setParameterValue(["lpf", "freq"], 20, true);
   //HS
   addParameter(["hs", "bypass"]);
   setParameterType(["hs", "bypass"], 1);
@@ -75,13 +75,13 @@ function onInit(){
   addParameter(["hs", "freq"]);
   setParameterType(["hs", "freq"], 0);
   setParameterRange(["hs", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["hs", "freq"], 20, false);
   setParameterCallback(["hs", "freq"], setCoeff);
+  setParameterValue(["hs", "freq"], 20, true);
   addParameter(["hs", "gain"]);
   setParameterType(["hs", "gain"], 0);
   setParameterRange(["hs", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["hs", "gain"], 0, false);
   setParameterCallback(["hs", "gain"], setCoeff);
+  setParameterValue(["hs", "gain"], 0, true);
   //LS
   addParameter(["ls", "bypass"]);
   setParameterType(["ls", "bypass"], 1);
@@ -90,13 +90,13 @@ function onInit(){
   addParameter(["ls", "freq"]);
   setParameterType(["ls", "freq"], 0);
   setParameterRange(["ls", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["ls", "freq"], 20, false);
   setParameterCallback(["ls", "freq"], setCoeff);
+  setParameterValue(["ls", "freq"], 20, true);
   addParameter(["ls", "gain"]);
   setParameterType(["ls", "gain"], 0);
   setParameterRange(["ls", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["ls", "gain"], 0, false);
   setParameterCallback(["ls", "gain"], setCoeff);
+  setParameterValue(["ls", "gain"], 0, true);
   //LF
   addParameter(["lf", "bypass"]);
   setParameterType(["lf", "bypass"], 1);
@@ -105,18 +105,18 @@ function onInit(){
   addParameter(["lf", "freq"]);
   setParameterType(["lf", "freq"], 0);
   setParameterRange(["lf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["lf", "freq"], 20, false);
   setParameterCallback(["lf", "freq"], setCoeff);
+  setParameterValue(["lf", "freq"], 20, true);
   addParameter(["lf", "gain"]);
   setParameterType(["lf", "gain"], 0);
   setParameterRange(["lf", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["lf", "gain"], 0, false);
   setParameterCallback(["lf", "gain"], setCoeff);
+  setParameterValue(["lf", "gain"], 0, true);
   addParameter(["lf", "q"]);
   setParameterType(["lf", "q"], 0);
   setParameterRange(["lf", "q"], 0, 1, 0.1, "");
-  setParameterValue(["lf", "q"], 0.5, false);
   setParameterCallback(["lf", "q"], setCoeff);
+  setParameterValue(["lf", "q"], 0.5, true);
   //LMF
   addParameter(["lmf", "bypass"]);
   setParameterType(["lmf", "bypass"], 1);
@@ -125,18 +125,18 @@ function onInit(){
   addParameter(["lmf", "freq"]);
   setParameterType(["lmf", "freq"], 0);
   setParameterRange(["lmf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["lmf", "freq"], 20, false);
   setParameterCallback(["lmf", "freq"], setCoeff);
+  setParameterValue(["lmf", "freq"], 20, true);
   addParameter(["lmf", "gain"]);
   setParameterType(["lmf", "gain"], 0);
   setParameterRange(["lmf", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["lmf", "gain"], 0, false);
   setParameterCallback(["lmf", "gain"], setCoeff);
+  setParameterValue(["lmf", "gain"], 0, true);
   addParameter(["lmf", "q"]);
   setParameterType(["lmf", "q"], 0);
   setParameterRange(["lmf", "q"], 0, 1, 0.1, "");
-  setParameterValue(["lmf", "q"], 0.5, false);
   setParameterCallback(["lmf", "q"], setCoeff);
+  setParameterValue(["lmf", "q"], 0.5, true);
   //MF
   addParameter(["mf", "bypass"]);
   setParameterType(["mf", "bypass"], 1);
@@ -145,18 +145,18 @@ function onInit(){
   addParameter(["mf", "freq"]);
   setParameterType(["mf", "freq"], 0);
   setParameterRange(["mf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["mf", "freq"], 20, false);
   setParameterCallback(["mf", "freq"], setCoeff);
+  setParameterValue(["mf", "freq"], 20, true);
   addParameter(["mf", "gain"]);
   setParameterType(["mf", "gain"], 0);
   setParameterRange(["mf", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["mf", "gain"], 0, false);
   setParameterCallback(["mf", "gain"], setCoeff);
+  setParameterValue(["mf", "gain"], 0, true);
   addParameter(["mf", "q"]);
   setParameterType(["mf", "q"], 0);
   setParameterRange(["mf", "q"], 0, 1, 0.1, "");
-  setParameterValue(["mf", "q"], 0.5, false);
   setParameterCallback(["mf", "q"], setCoeff);
+  setParameterValue(["mf", "q"], 0.5, true);
   //HMF
   addParameter(["hmf", "bypass"]);
   setParameterType(["hmf", "bypass"], 1);
@@ -165,18 +165,18 @@ function onInit(){
   addParameter(["hmf", "freq"]);
   setParameterType(["hmf", "freq"], 0);
   setParameterRange(["hmf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["hmf", "freq"], 20, false);
   setParameterCallback(["hmf", "freq"], setCoeff);
+  setParameterValue(["hmf", "freq"], 20, true);
   addParameter(["hmf", "gain"]);
   setParameterType(["hmf", "gain"], 0);
   setParameterRange(["hmf", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["hmf", "gain"], 0, false);
   setParameterCallback(["hmf", "gain"], setCoeff);
+  setParameterValue(["hmf", "gain"], 0, true);
   addParameter(["hmf", "q"]);
   setParameterType(["hmf", "q"], 0);
   setParameterRange(["hmf", "q"], 0, 1, 0.1, "");
-  setParameterValue(["hmf", "q"], 0.5, false);
   setParameterCallback(["hmf", "q"], setCoeff);
+  setParameterValue(["hmf", "q"], 0.5, true);
   //HF
   addParameter(["hf", "bypass"]);
   setParameterType(["hf", "bypass"], 1);
@@ -185,18 +185,18 @@ function onInit(){
   addParameter(["hf", "freq"]);
   setParameterType(["hf", "freq"], 0);
   setParameterRange(["hf", "freq"], 20, 20000, 1, "Hz");
-  setParameterValue(["hf", "freq"], 20, false);
   setParameterCallback(["hf", "freq"], setCoeff);
+  setParameterValue(["hf", "freq"], 20, true);
   addParameter(["hf", "gain"]);
   setParameterType(["hf", "gain"], 0);
   setParameterRange(["hf", "gain"], -inf, 10, 0.1, "dB");
-  setParameterValue(["hf", "gain"], 0, false);
   setParameterCallback(["hf", "gain"], setCoeff);
+  setParameterValue(["hf", "gain"], 0, true);
   addParameter(["hf", "q"]);
   setParameterType(["hf", "q"], 0);
   setParameterRange(["hf", "q"], 0, 1, 0.1, "");
-  setParameterValue(["hf", "q"], 0.5, false);
   setParameterCallback(["hf", "q"], setCoeff);
+  setParameterValue(["hf", "q"], 0.5, true);
   
   hpf[0] = new Hpf();
   hpf[1] = new Hpf();
@@ -220,4 +220,8 @@ function onInit(){
   rmsPre[1] = new rms();
   rmsPost[0] = new rms();
   rmsPost[1] = new rms();
+  rmsPre[0].setWindowSize(0.3);
+  rmsPre[1].setWindowSize(0.3);
+  rmsPost[0].setWindowSize(0.3);
+  rmsPost[1].setWindowSize(0.3);
 }
