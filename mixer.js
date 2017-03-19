@@ -102,6 +102,10 @@ function addInput(n){
   addInput(["input", "n", "insert", "return","l"]);
   addInput(["input", "n", "insert", "return","r"]);
   
+  addParamater(["input", "n", "name"]);
+  setParameterType(["input", "n", "name"], 2);
+  setParameterValue(["input", "n", "name"], "Input " + n);
+  
   addParameter(["input", "n", "vol", "val"]);
   setParameterType(["input", "n", "vol", "val"], 0);
   setParameterRange(["input", "n", "vol", "val"], -inf, 20, 0.1, "dB");
@@ -226,6 +230,30 @@ function addInput(n){
     });
     setParameterValue(["input", "n", "aux", i, "vol"], 0, true);
     
+    addParameter(["input", "n", "aux", i, "pan"]);
+    setParameterType(["input", "n", "aux", i, "pan"], 0);
+    setParameterRange(["input", "n", "aux", i, "vol"], 0, 1, 0.1, "");
+    setParameterValue(["input", "n", "aux", i, "vol"], 0, true);
     
+    addParameter(["input", "n", "aux", i, "width"]);
+    setParameterType(["input", "n", "aux", i, "width"], 0);
+    setParameterRange(["input", "n", "aux", i, "width"], 0, 1, 0.1, "");
+    setParameterValue(["input", "n", "aux", i, "width"], 0, true);
+    
+    addParameter(["input", "n", "aux", i, "mute"]);
+    setParameterType(["input", "n", "aux", i, "mute"], 1);
+    setParameterStates(["input", "n", "aux", i, "mute"], [0, 1], ["Unmuted", "Muted"]);
+    setParameterValue(["input", "n", "aux", i, "mute"], 0, true);
+    
+    addParameter(["input", "n", "aux", i, "pos"]);
+    setParameterType(["input", "n", "aux", i, "pos"], 1);
+    setParameterStates(["input", "n", "aux", i, "pos"], [0, 1, 2], ["Pre-Insert", "Pre-Fader", "Post-Fader"]);
+    setParameterValue(["input", "n", "aux", i, "pos"], 2, true);
+    
+    addParameter(["input", "n", "aux", i, "premute"]);
+    setParameterType(["input", "n", "aux", i, "premute"], 1);
+    setParameterStates(["input", "n", "aux", i, "premute"], [0, 1], ["No", "Yes"]);
+    setParameterValue(["input", "n", "aux", i, "premute"], 0, true);
+  }
                          
 }
