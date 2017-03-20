@@ -41,9 +41,58 @@ function onInit(){
   setParameterCallback(["matrix", "count"], changeMatrixCount);
   setParameterValue(["matrix", "count"], 8, true);
   
+  addParameter(["main", "vol", "val"]);
+  setParameterType(["main", "vol", "val"], 0);
+  setParameterRange(["main", "vol", "val"], -inf, 20, 0.1, "dB");
+  setParameterCallback(["main", "vol", "val"], new function(path, value){
+    inputs.n.vol.target = Math.pow(10, value / 20);
+    inputs.n.vol.rate = (inputs.n.vol.target - inputs.n.vol.current) / (getParameter(["input", "n", "vol", "time"]) * system.fs);
+  });
+  setParameterValue(["main", "vol", "val"], 0, true);
+  
+  addParameter(["main", "vol", "imm"]);
+  setParameterType(["main", "vol", "imm"], 0);
+  setParameterRange(["main", "vol", "imm"], -inf, 20, 0.1, "dB");
+  setParameterCallback(["main", "vol", "imm"], new function(path, value){
+    inputs.n.vol.current = Math.pow(10, value / 20);
+    inputs.n.vol.target = inputs.n.vol.target;
+  });
+  setParameterValue(["main", "vol", "imm"], 0, true);
+  removeFromState(["main", "imm"], true);
+  
+  addParameter(["main", "vol", "time"]);
+  setParameterType(["main", "vol", "time"], 0);
+  setParameterRange(["main", "vol", "time"], 0, 20, 0.01, "s");
+  setParameterCallback(["main", "vol", "time"], new function(path, value){
+    inputs.n.vol.rate = (inputs.n.vol.target - inputs.n.vol.current) / (getParameter(["input", "n", "vol", "time"]) * system.fs);
+  });
+  setParameterValue(["main", "vol", "time"], 0, true);
+  
+  addParameter(["main", "pan"]);
+  setParameterType(["main", "pan"], 0);
+  setParameterRange(["main", "pan"], 0, 1, 0.01, "");
+  setParameterValue(["main", "pan"], 0.5, true);
+  
+  addParameter(["main", "width"]);
+  setParameterType(["main", "width"], 0);
+  setParameterRange(["main", "width"], 0, 1, 0.01, "");
+  setParameterValue(["main", "width"], 0.5, true);
+  
+  addParameter(["main", "mute"]);
+  setParameterType(["main", "mute"], 1);
+  setParameterStates(["main", "mute"], [0, 1], ["Unmuted", "Muted"]);
+  setParameterValue(["main", "mute"], 0, true);
+  
+  addParameter(["main", "insert"]);
+  setParameterType(["main", "insert"], 1);
+  setParameterStates(["main", "insert"], [0, 1], ["Off", "On"]);
+  setParameterValue(["main", "insert"], 0, true);
+  
   addInput(["tb");
   addOutput(["mon", "l"]);
   addOutput(["mon", "r"]);
+  
+  
 }
 
 function changeInputCount(path, value){
@@ -122,8 +171,8 @@ function addInput(n){
     inputs.n.vol.current = Math.pow(10, value / 20);
     inputs.n.vol.target = inputs.n.vol.target;
   });
-  setParameterValue(["input", "n", "vol", "val"], 0, true);
-  removeFromState(["input", "n", "vol", "val"], true);
+  setParameterValue(["input", "n", "vol", "imm"], 0, true);
+  removeFromState(["input", "n", "vol", "imm"], true);
   
   addParameter(["input", "n", "vol", "time"]);
   setParameterType(["input", "n", "vol", "time"], 0);
@@ -232,8 +281,8 @@ function addInput(n){
     
     addParameter(["input", "n", "aux", i, "pan"]);
     setParameterType(["input", "n", "aux", i, "pan"], 0);
-    setParameterRange(["input", "n", "aux", i, "vol"], 0, 1, 0.1, "");
-    setParameterValue(["input", "n", "aux", i, "vol"], 0, true);
+    setParameterRange(["input", "n", "aux", i, "pan"], 0, 1, 0.1, "");
+    setParameterValue(["input", "n", "aux", i, "pan"], 0, true);
     
     addParameter(["input", "n", "aux", i, "width"]);
     setParameterType(["input", "n", "aux", i, "width"], 0);
@@ -255,5 +304,47 @@ function addInput(n){
     setParameterStates(["input", "n", "aux", i, "premute"], [0, 1], ["No", "Yes"]);
     setParameterValue(["input", "n", "aux", i, "premute"], 0, true);
   }
-                         
+  for(i=1;i<=getParameter(["matrix","count"]);i++){
+    addParameter(["input", "n", "matrix", i, "vol"]);
+    setParameterType(["input", "n", "matrix", i, "vol"], 0);
+    setParameterRange(["input", "n", "matrix", i, "vol"], -inf, 20, 0.1, "dB");
+    setParameterCallback(["input", "n", "matrix", i, "vol"], new function(path, value){
+      inputs.n.aux.i.vol = Math.pow(10, value / 20);
+    });
+    setParameterValue(["input", "n", "matrix", i, "vol"], 0, true);
+    
+    addParameter(["input", "n", "matrix", i, "pan"]);
+    setParameterType(["input", "n", "matrix", i, "pan"], 0);
+    setParameterRange(["input", "n", "matrix", i, "pan"], 0, 1, 0.1, "");
+    setParameterValue(["input", "n", "matrix", i, "pan"], 0, true);
+    
+    addParameter(["input", "n", "matrix", i, "width"]);
+    setParameterType(["input", "n", "matrix", i, "width"], 0);
+    setParameterRange(["input", "n", "matrix", i, "width"], 0, 1, 0.1, "");
+    setParameterValue(["input", "n", "matrix", i, "width"], 0, true);
+    
+    addParameter(["input", "n", "matrix", i, "mute"]);
+    setParameterType(["input", "n", "matrix", i, "mute"], 1);
+    setParameterStates(["input", "n", "matrix", i, "mute"], [0, 1], ["Unmuted", "Muted"]);
+    setParameterValue(["input", "n", "matrix", i, "mute"], 0, true);
+    
+    addParameter(["input", "n", "matrix", i, "pos"]);
+    setParameterType(["input", "n", "matrix", i, "pos"], 1);
+    setParameterStates(["input", "n", "matrix", i, "pos"], [0, 1, 2], ["Pre-Insert", "Pre-Fader", "Post-Fader"]);
+    setParameterValue(["input", "n", "matrix", i, "pos"], 2, true);
+    
+    addParameter(["input", "n", "matrix", i, "premute"]);
+    setParameterType(["input", "n", "matrix", i, "premute"], 1);
+    setParameterStates(["input", "n", "matrix", i, "premute"], [0, 1], ["No", "Yes"]);
+    setParameterValue(["input", "n", "matrix", i, "premute"], 0, true);
+    
+    inputs.i.rms.pre[0] = new Rms();
+    inputs.i.rms.pre[1] = new Rms();
+    inputs.i.rms.post[0] = new Rms();
+    inputs.i.rms.post[1] = new Rms():
+    rms.pre[0].setWindowSize(0.3);
+    rms.pre[1].setWindowSize(0.3);
+    rms.post[0].setWindowSize(0.3);
+    rms.post[1].setWindowSize(0.3);
+  }                       
 }
