@@ -1,16 +1,16 @@
 var Rms = require("rms");
 var Ducker = require("ducker");
 
-var inputs;
-var groups;
-var auxes;
-var matrices;
-var main;
+var channel;
 var groupBuffer;
 var auxBuffer;
 var matrixBuffer;
 var mainBuffer;
 var monBuffer;
+var inputSoloed = 0;
+var groupSoloed = 0;
+var auxSoloed = 0;
+var matrixSoloed = 0;
 var lastInputCount = 0;
 var lastGroupCount = 0;
 var lastAuxCount = 0;
@@ -306,24 +306,67 @@ function addCh(type, n){
       addParameter(path);
       setParameterType(path, 1);
       setParameterStates(path, [0, 1], ["Off", "On"]);
-      setParameterValue(path, 0, true);
+      setParameterValue(path, 0, true); 
+      path.length = idx + 1;
+      for(i=1;i<=getParameter(["aux","count"]);i++){
+        addSend("input", n, "aux", i);
+      }
     }
   }
-  path.length = idx + 1;
-  if(type == "input"){
-    for(i=1;i<=getParameter(["aux","count"]);i++){
-      addSend("input", n, "aux", i);
-    }
-  }
+ 
   if(type == "group"){
     for(i=1;i<=getParameter(["input", "count"]);i++){
-      addParameter(["input", n, "group", i]);
-      setParameterType(["input", n, "group", i], 1);
-      setParameterStates(["input", n, "group", i], [0, 1], ["Off", "On"]);
-      setParameterValue(["input", n, "group", i], 0, true);
+      addParameter(["input", i, "group", n]);
+      setParameterType(["input", i, "group", n], 1);
+      setParameterStates(["input", i, "group", n], [0, 1], ["Off", "On"]);
+      setParameterValue(["input", i, "group", n], 0, true);
     }
   }
+  if(type == "aux"){
+    for(i=1;i<=getParameter(["input", "count"]);i++){
+      addSend(["input", i, "aux", n]);
+    }
+  }
+  if(type == "matrix"){
+      for(i=1;i<=getParameter(["input", "count"]);i++){
+        addSend(["input", i, "matrix", n]);
+      }
+      for(i=1;i<=getParameter(["group", "count"]);i++){
+        addSend(["group", i, "matrix", n]);
+      }
+      for(i=1;i<=getParameter(["aux", "count"]);i++){
+        addSend(["aux", i, "matrix", n]);
+      }
+      addSend("main", 0, "matrix", n);
+  }
+  if(type != "matrix"){
+    for(i=0;i<=getParameter(["matrix", "count"]){
+        addSend(type, n, "matrix", i);
+    }
+  }
+if(type != "input"){
+  channel.type.n.ducker = new Ducker();
+  path[idx] = "tb";
+  path[idx + 1] = "sw";
+  addParameter(path);
+  setParameterType(path, 1);
+  setParameterStates(path, [0, 1], ["Off", "On"]);
+  setParameterValue(path, 0, true);
   
+  path[idx + 1] = "vol"
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, -inf, 20, 0.1, "dB");
+  setParameterCallback(path, new function(path, value){
+    channel.path[0].path[1].tb.vol = Math.pow(10, value / 20);
+  });
+  
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "sw";
+  addParameter(path);
+  setParameterType(path, 1);
+  setParameterStates(path, [0, 1], ["Off", "On"]);
+  setParameterValue(path, 0, true);
     
     channel.path[0].path[1].rms.pre[0] = new Rms();
     channel.path[0].path[1].rms.pre[1] = new Rms();
