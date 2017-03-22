@@ -2,6 +2,12 @@ var Rms = require("rms");
 var Ducker = require("ducker");
 
 var channel;
+var solo = {
+  "input";0,
+  "group":0,
+  "aux":0,
+  "matrix":0
+}
 var groupBuffer;
 var auxBuffer;
 var matrixBuffer;
@@ -353,7 +359,7 @@ if(type != "input"){
   setParameterStates(path, [0, 1], ["Off", "On"]);
   setParameterValue(path, 0, true);
   
-  path[idx + 1] = "vol"
+  path[idx + 1] = "vol";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -368,6 +374,78 @@ if(type != "input"){
   setParameterStates(path, [0, 1], ["Off", "On"]);
   setParameterValue(path, 0, true);
     
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "threshold";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, -inf, 20, 0.1, "dB");
+  setParameterCallback(path, new function(path, value){
+    if(path[0] == "main"){
+      channel.path[0].ducker.setThresh(value);
+    }else{
+      channel.path[0].path[1].ducker.setThresh(value);
+    }
+  });
+  setParameterValue(path, 0, true);
+  
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "range";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, -inf, 20, 0.1, "dB");
+  setParameterCallback(path, new function(path, value){
+    if(path[0] == "main"){
+      channel.path[0].ducker.setRange(value);
+    }else{
+      channel.path[0].path[1].ducker.setRange(value);
+    }
+  });
+  setParameterValue(path, 0, true);
+  
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "attack";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, 0, 20, 0.01, "s");
+  setParameterCallback(path, new function(path, value){
+    if(path[0] == "main"){
+      channel.path[0].ducker.setAttack(value);
+    }else{
+      channel.path[0].path[1].ducker.setAttack(value);
+    }
+  });
+  setParameterValue(path, 0.5, true);
+  
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "hold";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, 0, 20, 0.01, "s");
+  setParameterCallback(path, new function(path, value){
+    if(path[0] == "main"){
+      channel.path[0].ducker.setHold(value);
+    }else{
+      channel.path[0].path[1].ducker.setHold(value);
+    }
+  });
+  setParameterValue(path, 0.5, true);
+  
+  path[idx + 1] = "ducker";
+  path[idx + 2] = "release";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, 0, 20, 0.01, "s");
+  setParameterCallback(path, new function(path, value){
+    if(path[0] == "main"){
+      channel.path[0].ducker.setRelease(value);
+    }else{
+      channel.path[0].path[1].ducker.setRelease(value);
+    }
+  });
+  setParameterValue(path, 0.5, true);
+  
+  path.length = idx + 1;
+}
     channel.path[0].path[1].rms.pre[0] = new Rms();
     channel.path[0].path[1].rms.pre[1] = new Rms();
     channel.path[0].path[1].rms.post[0] = new Rms();
@@ -376,5 +454,73 @@ if(type != "input"){
     channel.path[0].path[1].rms.pre[1].setWindowSize(0.3);
     channel.path[0].path[1].rms.post[0].setWindowSize(0.3);
     channel.path[0].path[1].rms.post[1].setWindowSize(0.3);
-  }                       
 }
+function removeCh(type, n){
+  var path;
+  path[0] = type;
+  path[1] = n;
+  path[2] = (type == "input")?"in":"subin";
+  path[3] = "l";
+  removeInupt(path);
+  path[3] = "r";
+  removeInput(path);
+  path[2] = "insert";
+  path[3] = "send";
+  path[4] = "l";
+  removeOutput(path);
+  path[4] = "r";
+  removeOutput(path);
+  path[3] = "return";
+  path[4] = "l";
+  removeInput(path);
+  path[4] = "r";
+  removeInput(path);
+  path.length = 4;
+  if(type != "input"){
+    path[2] = "out";
+    path[3] = "l";
+    removeOutput(path);
+    path[3] = "r";
+    removeOutput(path);
+  }
+  path.length = 3;
+  path[1] = "name";
+  removeParameter(path);
+  path[1] = "vol";
+  path[2] = "val";
+  removeParameter(path);
+  path[2] = "imm";
+  removeParameter(path);
+  path[2] = "time";
+  removeParameter(path);
+  channel.path[0].path[1].vol.current = undefined;
+  channel.path[0].path[1].vol.target = undefined;
+  channel.path[0].path[1].vol.rate = undefined;
+  path.length = 3;
+  path[2] = "pan";
+  removeParameter(path);
+  path[2] = "width";
+  removeParameter(path);
+  path[2] = "mute";
+  removeParameter(path);
+  path[2] = "solo";
+  removeParameter(path);
+  path[2] = "safe";
+  removeParameter(path);
+  path[2] = "insert";
+  removeParameter(path);
+  path[2] = "mono";
+  removeParameter(path);
+  path[2] = "main";
+  removeParameter(path);
+  path[2] = "pfl";
+  removeParameter(path);
+  path[2] = "afl";
+  removeParameter(path);
+  path[2] = "phase";
+  path[3] = "l";
+  removeParameter(path);
+  path[3] = "r";
+  removeParameter(path);
+  path.length = 3;
+  
