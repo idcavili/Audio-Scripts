@@ -3,7 +3,7 @@ var Ducker = require("ducker");
 
 var channel;
 var solo = {
-  "input";0,
+  "input":0,
   "group":0,
   "aux":0,
   "matrix":0
@@ -522,5 +522,46 @@ function removeCh(type, n){
   removeParameter(path);
   path[3] = "r";
   removeParameter(path);
-  path.length = 3;
+  path[2] = "tb";
+  path[3] = "sw";
+  removeParameter(path);
+  path[3] = "vol";
+  removeParameter(path);
+  path[4] = "ducker";
+  path[5] = "switch";
+  removeParameter(path);
+  path[5] = "threshold":
+  removeParameter(path);
+  path[5] = "range";
+  removeParameter(path);
+  path[5] = "attack";
+  removeParameter(path);
+  path[5] = "hold";
+  removeParameter(path);
+  path[6] = "release";
+  removeParameter(path);
+  channel.type.n.ducker = undefined;
+  path.length = 5;
+  path[2] = "rms";
+  path[3] = "pre";
+  path[4] = "l";
+  removeParameter(path);
+  path[4] = "r";
+  removeParameter(path);
+  path[3] = "post";
+  path[4] = "l";
+  removeParameter(path);
+  path[4] = "r";
+  removeParameter(path);
+  channel.type.n.rms.pre[0] = undefined;
+  channel.type.n.rms.pre[1] = undefined;
+  channel.type.n.rms.post[0] = undefined;
+  channel.type.n.rms.post[1] = undefined;
+  path.length = 4;
+  path[2] = "group";
+  for(i=0;i<=getParameter(["group", "count"]);i++){
+    path[3] = i;
+    removeParameter(path);
+  }
+  
   
