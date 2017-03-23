@@ -8,6 +8,7 @@ var solo = {
   "aux":0,
   "matrix":0
 }
+var listen = 0;
 var groupBuffer;
 var auxBuffer;
 var matrixBuffer;
@@ -214,6 +215,13 @@ function addCh(type, n){
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Off", "On"]);
+    setParameterCallback(path, new function(path, value){
+      if(value == 1){
+        solo.path[0]++;
+      }else{
+        solo.path[0]--;
+      }
+    });
     setParameterValue(path, 0, true);
   
     path[idx] = "safe";
@@ -262,6 +270,16 @@ function addCh(type, n){
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
+  setParameterCallback(path, new function(path, value){
+    if(value == 1 && getParameter([path[0], path[1], "afl"]) == 1){
+       setParameterValue([path[0], path[1], "afl"], 0, false);
+    }else{
+      listen++;
+    }
+    if(value == 0){
+      listen--;
+    }
+  });
   setParameterValue(path, 0, true);
   if(type == "main"){
     path[idx] = "mon";
@@ -559,9 +577,55 @@ function removeCh(type, n){
   channel.type.n.rms.post[1] = undefined;
   path.length = 4;
   path[2] = "group";
-  for(i=0;i<=getParameter(["group", "count"]);i++){
+  for(i=1;i<=getParameter(["group", "count"]);i++){
     path[3] = i;
     removeParameter(path);
   }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    removeSend(type, n, "aux", i);
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    removeSend(type, n, "matrix", i);
+  }
+  path[2] = "tb";
+  path[3] = "sw";
+  removeParameter(path);
+  path[3] = "vol";
+  removeParamter(path);
+  path[3] = "ducker";
+  path[4] = "sw";
+  removeParameter(path);
+  path[4] = "threshold";
+  removeParameter(path);
+  path[4] = "range";
+  removeParameter(path);
+  path[4] = "attack";
+  removeParameter(path);
+  path[4] = "hold";
+  removeParameter(path);
+  path[4] = "release";
+  if(type == "group"){
+    for(i=1;i<=getParameter(["input", "count"]);i++){
+      removeParameter(["input", i, "group", n]);
+    }
+  }
+  if(type == "aux"){
+    for(i=0;i<=getParameter(["input", "count"]);i++){
+      removeSend("input", i, "aux", n);
+    }
+  }
+  if(type == "matrix"){
+    for(i=0;i<=getParameter(["input", "count"]);i++){
+      removeSend("input", i, "matrix", n);
+    }
+    for(i=0;i<=getParameter(["group", "count"]);i++){
+      removeSend("group", i, "matrix", n);
+    }
+    for(i=0;i<=getParameter(["aux", "count"]);i++){
+      removeSend("aux", i, "matrix", n);
+    }
+    removeSend("main", 0, "matrix", n);
+  }
+}
   
   
