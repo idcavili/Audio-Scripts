@@ -289,6 +289,18 @@ function addCh(type, n){
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
+  if(type != "main"){
+    setParameterCallback(path, new function(path, value){
+    if(value == 1 && getParameter([path[0], path[1], "pfl"]) == 1){
+       setParameterValue([path[0], path[1], "pfl"], 0, false);
+    }else{
+      listen++;
+    }
+    if(value == 0){
+      listen--;
+    }
+  });
+  }
   setParameterValue(path, 0, true);
   
   path[idx] = "rms";
@@ -670,4 +682,27 @@ function addSend(chType, ch, sendType, send){
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["No", "Yes"]);
   setParameterValue(path, 0, true);
+}
+function removeSend(chType, ch, sendType, send){
+  var path;
+  var idx = (chType == "main")?1:2;
+  path[0] = chType;
+  if(chType != "main"){
+    path[idx] = ch;
+  }
+  path[idx] = sendType;
+  path[idx + 1] = send;
+  path[idx + 2] = "vol";
+  removeParameter(path);
+  path[idx + 2] = "pan";
+  removeParamater(path);
+  path[idx + 2] = "width";
+  removeParameter(path);
+  path[idx + 2] = "mute";
+  removeParameter(path);
+  path[idx + 2] = "pos";
+  removeParaemter(path);
+  path[idx + 2] = "premute";
+  removeParameter(path);
+  channel.path[0].path[1].path[2].path[3].vol = undefined;
 }
