@@ -113,13 +113,13 @@ function addCh(type, n){
     path[1] = n;
   }
   if(type == "input"){
-    path[idx] = "in"
+    path[idx] = "in";
   }else{
-    path[idx] = "subin"
+    path[idx] = "subin";
   }
-  path[idx + 1] = "l"
+  path[idx + 1] = "l";
   addInput(path);
-  path[idx + 1] = "r"
+  path[idx + 1] = "r";
   addInput(path);
   path[idx] = "insert";
   path[idx + 1] = "send";
@@ -133,10 +133,10 @@ function addCh(type, n){
   path[idx + 2] = "r";
   addInput(path);
   if(type != input){
-    path[idx] = "out"
-    path[idx + 1] = "l"
+    path[idx] = "out";
+    path[idx + 1] = "l";
     addOutput(path);
-    path[idx + 1] = "r"
+    path[idx + 1] = "r";
     addOutput(path);
   }
   path[idx] = "name";
@@ -627,5 +627,47 @@ function removeCh(type, n){
     removeSend("main", 0, "matrix", n);
   }
 }
-  
-  
+
+function addSend(chType, ch, sendType, send){
+  var path;
+  var idx = (chType == "main")?1:2;
+  path[0] = chType;
+  if(chType != "main"){
+    path[idx] = ch;
+  }
+  path[idx] = sendType;
+  path[idx + 1] = send;
+  path[idx + 2] = "vol";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, -inf, 20, 0.1, "dB");
+  setParameterCallback(path, new function(path, value){
+    channel.path[0].path[1].path[2].path[3].vol = Math.pow(10, value / 20);
+  });
+  setParameterValue(path, 0, true);
+  path[idx + 2] = "pan";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, 0, 1, 0.1, "");
+  setParameterValue(path, 0.5, true);
+  path[idx + 2] = "width";
+  addParameter(path);
+  setParameterType(path, 0);
+  setParameterRange(path, 0, 1, 0.1, "");
+  setParameterValue(path, 1, true);
+  path[idx + 2] = "mute";
+  addParameter(path);
+  setParameterType(path, 1);
+  setParameterStates(path, [0, 1], ["Unmuted", "Muted"]);
+  setParameterValue(path, 1, true);
+  path[idx + 2] = "pos";
+  addParameter(path);
+  setParameterType(path, 1);
+  setParameterStates(path, [0, 1, 2], ["Pre-Insert", "Pre-Fader", "Post-Fader"]);
+  setParameterValue(path, 2, true);
+  path[idx + 2] = "premute";
+  addParameter(path);
+  setParameterType(path, 1);
+  setParameterStates(path, [0, 1], ["No", "Yes"]);
+  setParameterValue(path, 0, true);
+}
