@@ -706,3 +706,64 @@ function removeSend(chType, ch, sendType, send){
   removeParameter(path);
   channel.path[0].path[1].path[2].path[3].vol = undefined;
 }
+function processInput(n){
+  var buffer = [];
+  buffer[0] = readSample(["input", n, "l"]);
+  buffer[1] = readSample(["input", n, "r"]);
+  if(getParameter(["input", n, "mono"]) == 1){
+    buffer[0] += buffer[1];
+    buffer[1] = buffer[0];
+  }
+  if(getParameter(["input", n, "phase", "l"]) == 1){
+    buffer[0] *= -1;
+  }
+  if(getParameter(["input", n, "phase", "r"]) == 1){
+    buffer[1] *= -1;
+  }
+  var muted;
+  if(getParameter(["input", n, "mute"]) == 0 && (getParameter(["input", n, "solo"]) == 1 || getParameter(["input", n, "safe"]) == 1 || solo."input" == 0)){
+     muted = false;
+  }else{
+    muted = true;
+  }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    if(getParameter(["input", n, "aux", i, "pos"]) == 0){
+      if(getParameter(["input", n, "aux", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "aux", i, "premute"]) == 1)){
+        processSend("input", n, "aux", i);
+      }
+    }
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    if(getParameter(["input", n, "matrix", i, "pos"]) == 0){
+      if(getParameter(["input", n, "matrix", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "matrix", i, "premute"]) == 1)){
+        processSend("input", n, "matrix", i);
+      }
+    }
+  }
+  writeSample(["input", n, "insert", "send", "l"], buffer[0]);
+  writeSample(["input", n, "insert", "send", "r"], buffer[1]);
+  if(getParameter(["input", n, "insert"]) == 1){
+    buffer[0] = readSample(["input", n, "insert", "return", "l"]);
+    buffer[1] = readSample(["input", n, "insert", "return", "r"]);
+  }
+  setParameter(["input", n, "rms", "pre", "l"], Math.pow(10, channel.input.n.rms.pre.l.calculate(buffer[0])) / 20);
+  setParameter(["input", n, "rms", "pre", "r"], Math.pow(10, channel.input.n.rms.pre.r.calculate(buffer[0])) / 20);
+  if(getParameter(["input", n, "pfl"]) == 1){
+    mon[0] += buffer[0];
+    mon[1] += buffer[1];
+  }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    if(getParameter(["input", n, "aux", i, "pos"]) == 1){
+      if(getParameter(["input", n, "aux", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "aux", i, "premute"]) == 1)){
+        processSend("input", n, "aux", i);
+      }
+    }
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    if(getParameter(["input", n, "matrix", i, "pos"]) == 1){
+      if(getParameter(["input", n, "matrix", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "matrix", i, "premute"]) == 1)){
+        processSend("input", n, "matrix", i);
+      }
+    }
+  }
+
