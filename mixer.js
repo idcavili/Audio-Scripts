@@ -755,15 +755,59 @@ function processInput(n){
   for(i=1;i<=getParameter(["aux", "count"]);i++){
     if(getParameter(["input", n, "aux", i, "pos"]) == 1){
       if(getParameter(["input", n, "aux", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "aux", i, "premute"]) == 1)){
-        processSend("input", n, "aux", i);
+        processSend(buffer, "input", n, "aux", i);
       }
     }
   }
   for(i=1;i<=getParameter(["matrix", "count"]);i++){
     if(getParameter(["input", n, "matrix", i, "pos"]) == 1){
       if(getParameter(["input", n, "matrix", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "matrix", i, "premute"]) == 1)){
-        processSend("input", n, "matrix", i);
+        processSend(buffer, "input", n, "matrix", i);
       }
     }
   }
+  buffera[0] = buffer[0] * getParameter(["input", n, "width]"]);
+  buffera[0] += buffer[1] * (1 - getParameter("input", n, "width"]));
+  buffera[1] = buffer[1] * getParameter(["input", n, "width]"]);
+  buffera[1] += buffer[0] * (1 - getParameter("input", n, "width"]));
+  buffer[0] = buffera[0];
+  buffer[1] = buffera[1];
+  if(channel."input".n.vol.current != channel."input".n.vol.target){
+    channel."input".n.vol.current += channel."input".n.vol.rate;
+  }
+  buffer[0] *= channel."input".n.vol.current;
+  buffer[1] *= channel."input".n.vol.current;
+  buffer[0] *= (1 - getParameter(["input", n, "pan"]));
+  buffer[1] *= getParameter(["input", n, "pan"]);
+  setParameter(["input", n, "rms", "post", "l"], Math.pow(10, channel.input.n.rms.post.l.calculate(buffer[0])) / 20);
+  setParameter(["input", n, "rms", "post", "r"], Math.pow(10, channel.input.n.rms.post.r.calculate(buffer[0])) / 20);
+  if(getParameter(["input", n, "afl"]) == 1){
+    mon[0] += buffer[0];
+    mon[1] += buffer[1];
+  }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    if(getParameter(["input", n, "aux", i, "pos"]) == 2){
+      if(getParameter(["input", n, "aux", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "aux", i, "premute"]) == 1)){
+        processSend(buffer, "input", n, "aux", i);
+      }
+    }
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    if(getParameter(["input", n, "matrix", i, "pos"]) == 2){
+      if(getParameter(["input", n, "matrix", i, "mute"]) == 0 && (!muted || getParameter(["input", n, "matrix", i, "premute"]) == 1)){
+        processSend(buffer, "input", n, "matrix", i);
+      }
+    }
+  }
+  for(i=1;i<=getParameter(["group", "count"]);i++){
+    if(getParameter(["input", n, "group", i])){
+      channel."group".i.buffer[0] += buffer[0];
+      channel."group".i.buffer[1] += buffer[1];
+    }
+  }
+  if(getParameter(["input", n, "main"])){
+    channel."main".0.buffer[0] += buffer[0];
+    channel."main".0.buffer[1] += buffer[1];
+  }
+}
 
