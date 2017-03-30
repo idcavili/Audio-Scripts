@@ -968,5 +968,17 @@ function processMain(){
     writeSample(["main", "out", "r"], 0.0);
   }
 }
-  
+function processSend(sample, chType, ch, sendType, send){
+  var samplea = [];
+  samplea[0] = sample[0] * getParameter([chType, ch, sendType, send, "width"]);
+  samplea[0] += sample[1] * (1 - getParameter([chType, ch, sendType, send, "width"]));
+  samplea[1] = sample[1] * getParameter([chType, ch, sendType, send, "width"]);
+  samplea[1] += sample[1] * (1 - getParameter([chType, ch, sendType, send, "width"]));
+  samplea[0] *= channel.chType.ch.sendType.send.vol;
+  samplea[1] *= channel.chType.ch.sendType.send.vol;
+  samplea[0] *= (1 - getParameter([chType, ch, sendType, send, "pan"]));
+  samplea[1] *= getParameter([chType, ch, sendType, send, "pan"]);
+  channel.sendType.send.buffer[0] += samplea[0];
+  channel.sendType.send.buffer[1] += samplea[1];
+}
  
