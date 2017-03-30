@@ -864,10 +864,10 @@ function processBus(type, n){
   if(channel.type.n.vol.current != channel.type.n.vol.target){
     channel.type.n.vol.current += channel.type.n.vol.rate;
   }
-  buffer[0] *= channel.type.n.vol.current;
-  buffer[1] *= channel.type.n.vol.current;
-  buffer[0] *= (1 - getParameter([type, n, "pan"]));
-  buffer[1] *= getParameter([type, n, "pan"]);
+  channel.type.n.buffer[0] *= channel.type.n.vol.current;
+  channel.type.n.buffer[1] *= channel.type.n.vol.current;
+  channel.type.n.buffer[0] *= (1 - getParameter([type, n, "pan"]));
+  channel.type.n.buffer[1] *= getParameter([type, n, "pan"]);
   setParameter([type, n, "rms", "post", "l"], Math.pow(10, channel.type.n.rms.post[0].calculate(buffer[0])) / 20);
   setParameter([type, n, "rms", "post", "r"], Math.pow(10, channel.type.n.rms.post[1].calculate(buffer[1])) / 20);
   if(getParameter(["input", n, "afl"]) == 1){
@@ -923,8 +923,8 @@ function processMain(){
   setParameter(["main", "rms", "pre", "l"], Math.pow(10, channel."main".0.rms.pre[0].calculate(buffer[0])) / 20);
   setParameter(["main", "rms", "pre", "r"], Math.pow(10, channel."main".1.rms.pre[1].calculate(buffer[1])) / 20);
   if(getParameter([type, n, "pfl"]) == 1){
-    mon[0] += channel.type.n.buffer[0];
-    mon[1] += channel.type.n.buffer[1];
+    mon[0] += channel."main".0.buffer[0];
+    mon[1] += channel."main".0.buffer[1];
   }
   for(i=1;i<=getParameter(["matrix", "count"]);i++){
       if(getParameter(["main", "matrix", i, "pos"]) == 1){
@@ -933,5 +933,40 @@ function processMain(){
         }
       }
   }
+  var buffera = [];
+  buffera[0] = channel."main".0.buffer[0] * getParameter(["main", "width]"]);
+  buffera[0] += channel."main".0.buffer[1] * (1 - getParameter("main", "width"]));
+  buffera[1] = channel."main".0.buffer[1] * getParameter(["main", "width]"]);
+  buffera[1] += channel."main".0.buffer[0] * (1 - getParameter("main", "width"]));
+  channel."main".0.buffer[0] = buffera[0];
+  channel."main".0.buffer[1] = buffera[1];
+  if(channel."main".0.vol.current != channel."main".0.vol.target){
+    channel."main".0.vol.current += channel."main".0.vol.rate;
+  }
+  channel."main".0.buffer[0] *= channel."main".0.vol.current;
+  channel."main".0.buffer[1] *= channel."main".0.vol.current;
+  channel."main".0.buffer[0] *= (1 - getParameter(["main", "pan"]));
+  channel."main".0.buffer[1] *= getParameter(["main", "pan"]);
+  setParameter(["main", "rms", "post", "l"], Math.pow(10, channel."main".0.rms.post[0].calculate(buffer[0])) / 20);
+  setParameter(["main", "rms", "post", "r"], Math.pow(10, channel."main".0.rms.post[1].calculate(buffer[1])) / 20);
+  if(getParameter(["main", "mon"]) == 1 && listen == 0){
+    mon[0] += channel."main".buffer[0];
+    mon[1] += channel."main".buffer[1];
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+      if(getParameter(["main", "matrix", i, "pos"]) == 2){
+        if(getParameter(["main", "matrix", i, "mute"]) == 0 && (!muted || getParameter(["main", "matrix", i, "premute"]) == 1)){
+          processSend(channel."main".0.buffer, "main", n, "matrix", i);
+        }
+      }
+  }
+  if(!muted){
+    writeSample(["main", "out", "l"], channel."main".buffer[0]);
+    writeSample(["main", "out", "r"], channel."main".buffer[1]);
+  }else{
+    writeSample(["main", "out", "l"], 0.0);
+    writeSample(["main", "out", "r"], 0.0);
+  }
+}
   
  
