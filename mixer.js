@@ -746,8 +746,8 @@ function processInput(n){
     buffer[0] = readSample(["input", n, "insert", "return", "l"]);
     buffer[1] = readSample(["input", n, "insert", "return", "r"]);
   }
-  setParameter(["input", n, "rms", "pre", "l"], Math.pow(10, channel.input.n.rms.pre.l.calculate(buffer[0])) / 20);
-  setParameter(["input", n, "rms", "pre", "r"], Math.pow(10, channel.input.n.rms.pre.r.calculate(buffer[1])) / 20);
+  setParameter(["input", n, "rms", "pre", "l"], Math.pow(10, channel.input.n.rms.pre[0].calculate(buffer[0])) / 20);
+  setParameter(["input", n, "rms", "pre", "r"], Math.pow(10, channel.input.n.rms.pre[1].calculate(buffer[1])) / 20);
   if(getParameter(["input", n, "pfl"]) == 1){
     mon[0] += buffer[0];
     mon[1] += buffer[1];
@@ -780,8 +780,8 @@ function processInput(n){
   buffer[1] *= channel."input".n.vol.current;
   buffer[0] *= (1 - getParameter(["input", n, "pan"]));
   buffer[1] *= getParameter(["input", n, "pan"]);
-  setParameter(["input", n, "rms", "post", "l"], Math.pow(10, channel.input.n.rms.post.l.calculate(buffer[0])) / 20);
-  setParameter(["input", n, "rms", "post", "r"], Math.pow(10, channel.input.n.rms.post.r.calculate(buffer[1])) / 20);
+  setParameter(["input", n, "rms", "post", "l"], Math.pow(10, channel.input.n.rms.post[0].calculate(buffer[0])) / 20);
+  setParameter(["input", n, "rms", "post", "r"], Math.pow(10, channel.input.n.rms.post[1].calculate(buffer[1])) / 20);
   if(getParameter(["input", n, "afl"]) == 1){
     mon[0] += buffer[0];
     mon[1] += buffer[1];
@@ -833,14 +833,14 @@ function processBus(type, n){
       }
     }
   }
-  writeSample([type, n, "insert", "send", "l"], buffer[0]);
-  writeSample([type, n, "insert", "send", "r"], buffer[1]);
+  writeSample([type, n, "insert", "send", "l"], channel.type.n.buffer[0]);
+  writeSample([type, n, "insert", "send", "r"], channel.type.n.buffer[1]);
   if(getParameter([type, n, "insert"]) == 1){
     channel.type.n.buffer[0] = readSample([type, n, "insert", "return", "l"]);
     channel.type.n.buffer[1] = readSample([type, n, "insert", "return", "r"]);
   }
-  setParameter([type, n, "rms", "pre", "l"], Math.pow(10, channel.type.n.rms.pre.l.calculate(buffer[0])) / 20);
-  setParameter([type, n, "rms", "pre", "r"], Math.pow(10, channel.type.n.rms.pre.r.calculate(buffer[1])) / 20);
+  setParameter([type, n, "rms", "pre", "l"], Math.pow(10, channel.type.n.rms.pre[0].calculate(buffer[0])) / 20);
+  setParameter([type, n, "rms", "pre", "r"], Math.pow(10, channel.type.n.rms.pre[1].calculate(buffer[1])) / 20);
   if(getParameter([type, n, "pfl"]) == 1){
     mon[0] += channel.type.n.buffer[0];
     mon[1] += channel.type.n.buffer[1];
@@ -868,8 +868,8 @@ function processBus(type, n){
   buffer[1] *= channel.type.n.vol.current;
   buffer[0] *= (1 - getParameter([type, n, "pan"]));
   buffer[1] *= getParameter([type, n, "pan"]);
-  setParameter([type, n, "rms", "post", "l"], Math.pow(10, channel.type.n.rms.post.l.calculate(buffer[0])) / 20);
-  setParameter([type, n, "rms", "post", "r"], Math.pow(10, channel.type.n.rms.post.r.calculate(buffer[1])) / 20);
+  setParameter([type, n, "rms", "post", "l"], Math.pow(10, channel.type.n.rms.post[0].calculate(buffer[0])) / 20);
+  setParameter([type, n, "rms", "post", "r"], Math.pow(10, channel.type.n.rms.post[1].calculate(buffer[1])) / 20);
   if(getParameter(["input", n, "afl"]) == 1){
     mon[0] += channel.type.n.buffer[0];
     mon[1] += channel.type.n.buffer[1];
@@ -895,3 +895,43 @@ function processBus(type, n){
     writeSample([type, n, "out", "r"], 0.0);
   }
 }
+function processMain(){
+ channel."main".0.buffer[0] += readSample(["main", "subin", "l"]);
+ channel."main".n.buffer[1] += readSample(["main", "subin", "r"]);
+ if(getParameter(["main", "tb", "sw"]) == 1){
+   channel."main".0.buffer = processTB(channel."main".0.buffer, "main", n);
+ }
+ var muted;
+ if(getParameter(["main", "mute"]) == 1){
+   muted = true;
+ }else{
+   muted = false;
+ }
+ for(i=1;i<=getParameter(["matrix", "count"]);i++){
+      if(getParameter(["main", "matrix", i, "pos"]) == 0){
+        if(getParameter(["main", "matrix", i, "mute"]) == 0 && (!muted || getParameter(["main", "matrix", i, "premute"]) == 1)){
+          processSend(channel."main".0.buffer, "main", n, "matrix", i);
+        }
+      }
+  }
+  writeSample(["main", "insert", "send", "l"], channel.type.n.buffer[0]);
+  writeSample(["main", "insert", "send", "r"], channel.type.n.buffer[1]);
+  if(getParameter(["main", "insert"]) == 1){
+    channel.type.n.buffer[0] = readSample(["main", "insert", "return", "l"]);
+    channel.type.n.buffer[1] = readSample(["main", "insert", "return", "r"]);
+  }
+  setParameter(["main", "rms", "pre", "l"], Math.pow(10, channel."main".0.rms.pre[0].calculate(buffer[0])) / 20);
+  setParameter(["main", "rms", "pre", "r"], Math.pow(10, channel."main".1.rms.pre[1].calculate(buffer[1])) / 20);
+  if(getParameter([type, n, "pfl"]) == 1){
+    mon[0] += channel.type.n.buffer[0];
+    mon[1] += channel.type.n.buffer[1];
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+      if(getParameter(["main", "matrix", i, "pos"]) == 1){
+        if(getParameter(["main", "matrix", i, "mute"]) == 0 && (!muted || getParameter(["main", "matrix", i, "premute"]) == 1)){
+          processSend(channel."main".0.buffer, "main", n, "matrix", i);
+        }
+      }
+  }
+  
+ 
