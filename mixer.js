@@ -108,38 +108,37 @@ function changeMatrixCount(path, value){
 function addCh(type, n){
   var path;
   path[0] = type;
-  var idx = (type == "main")?1:2;
-  if(type != "main"){
-    path[1] = n;
-  }
+  path[1] = n;
   if(type == "input"){
-    path[idx] = "in";
+    path[2] = "in";
   }else{
-    path[idx] = "subin";
+    path[2] = "subin";
   }
-  path[idx + 1] = "l";
+  path[3] = "l";
   addInput(path);
-  path[idx + 1] = "r";
+  path[3] = "r";
   addInput(path);
-  path[idx] = "insert";
-  path[idx + 1] = "send";
-  path[idx + 2] = "l";
+  path[2] = "insert";
+  path[3] = "send";
+  path[4] = "l";
   addOutput(path);
-  path[idx + 2] = "r";
+  path[4] = "r";
   addOutput(path);
-  path[idx + 1] = "return";
-  path[idx + 2] = "l";
+  path[3] = "return";
+  path[4] = "l";
   addInput(path);
-  path[idx + 2] = "r";
+  path[4] = "r";
   addInput(path);
+  path.length = 4;
   if(type != input){
-    path[idx] = "out";
-    path[idx + 1] = "l";
+    path[2] = "out";
+    path[3] = "l";
     addOutput(path);
-    path[idx + 1] = "r";
+    path[3] = "r";
     addOutput(path);
   }
-  path[idx] = "name";
+  path.length = 3;
+  path[2] = "name";
   addParamater(path);
   setParameterType(path, 2);
   switch(type){
@@ -160,8 +159,8 @@ function addCh(type, n){
       break;
     }
   
-  path[idx] = "vol";
-  path[idx + 1] = "val";
+  path[2] = "vol";
+  path[3] = "val";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -171,7 +170,7 @@ function addCh(type, n){
   });
   setParameterValue(path, 0, true);
   
-  path[idx + 1] = "imm";
+  path[3] = "imm";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -182,7 +181,7 @@ function addCh(type, n){
   setParameterValue(path, 0, true);
   removeFromState(path, true);
   
-  path[idx + 1] = "time"
+  path[3] = "time"
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 20, 0.01, "s");
@@ -191,27 +190,27 @@ function addCh(type, n){
   });
   setParameterValue(path, 0, true);
   
-  path.length = idx + 1;
-  path[idx] = "pan";
+  path.length = 3;
+  path[2] = "pan";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 1, 0.01, "");
   setParameterValue(path, 0.5, true);
   
-  path[idx] = "width";
+  path[2] = "width";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 1, 0.01, "");
   setParameterValue(path, 0.5, true);
   
-  path[idx] = "mute";
+  path[2] = "mute";
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Unmuted", "Muted"]);
   setParameterValue(path, 0, true);
   
   if(type != main){
-    path[idx] = "solo";
+    path[2] = "solo";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Off", "On"]);
@@ -224,49 +223,49 @@ function addCh(type, n){
     });
     setParameterValue(path, 0, true);
   
-    path[idx] = "safe";
+    path[2] = "safe";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Off", "On"]);
     setParameterValue(path, 0, true);
   }
   
-  path[idx] = "insert";
+  path[2] = "insert";
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
   setParameterValue(path, 0, true);
   
   if(type == "input"){
-    path[idx] = "mono";
+    path[2] = "mono";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Off", "On"]);
     setParameterValue(path, 0, true);
     
-    path[idx] = "phase";
-    path[idx + 1] = "l";
+    path[2] = "phase";
+    path[3] = "l";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Normal", "Reverse"]);
     setParameterValue(path, 0, true);
   
-    path[idx + 1] = "r";
+    path[3] = "r";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Normal", "Reverse"]);
     setParameterValue(path, 0, true);
-    path.length = idx + 1;
+    path.length = 2;
   }
   if(type != "main" && type != "matrix"){
-    path[idx] = "main";
+    path[2] = "main";
     addParameter(path);
     setParameterType(path, 1);
     setParameterStates(path, [0, 1], ["Off", "On"]);
     setParameterValue(path, 0, true);
   }
   
-  path[idx] = "pfl";
+  path[2] = "pfl";
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
@@ -282,9 +281,9 @@ function addCh(type, n){
   });
   setParameterValue(path, 0, true);
   if(type == "main"){
-    path[idx] = "mon";
+    path[2] = "mon";
   }else{
-    path[idx] = "afl";
+    path[2] = "afl";
   }
   addParameter(path);
   setParameterType(path, 1);
@@ -303,47 +302,47 @@ function addCh(type, n){
   }
   setParameterValue(path, 0, true);
   
-  path[idx] = "rms";
-  path[idx + 1] = "pre";
-  path[idx + 2] = "l";
+  path[2] = "rms";
+  path[3] = "pre";
+  path[4] = "l";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
   setParameterReadOnly(path, true);
   setParameterValue(path, -inf, true);
   
-  path[idx + 2] = "r";
+  path[4] = "r";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
   setParameterReadOnly(path, true);
   setParameterValue(path, -inf, true);
   
-  path[idx + 1] = "post";
-  path[idx + 2] = "l";
+  path[3] = "post";
+  path[4] = "l";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
   setParameterReadOnly(path, true);
   setParameterValue(path, -inf, true);
   
-  path[idx + 2] = "r";
+  path[4] = "r";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
   setParameterReadOnly(path, true);
   setParameterValue(path, -inf, true);
-  path.length = idx + 1;
+  path.length = 3;
   
   if(type == "input"){
-    path[idx] = "group";
+    path[3] = "group";
     for(i=1;i<=getParameter(["group", "count"]);i++){
-      path[idx + 1] = i;
+      path[4] = i;
       addParameter(path);
       setParameterType(path, 1);
       setParameterStates(path, [0, 1], ["Off", "On"]);
       setParameterValue(path, 0, true); 
-      path.length = idx + 1;
+      path.length = 3;
       for(i=1;i<=getParameter(["aux","count"]);i++){
         addSend("input", n, "aux", i);
       }
@@ -382,14 +381,14 @@ function addCh(type, n){
   }
 if(type != "input"){
   channel.type.n.ducker = new Ducker();
-  path[idx] = "tb";
-  path[idx + 1] = "sw";
+  path[2] = "tb";
+  path[3] = "sw";
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
   setParameterValue(path, 0, true);
   
-  path[idx + 1] = "vol";
+  path[3] = "vol";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -397,15 +396,15 @@ if(type != "input"){
     channel.path[0].path[1].tb.vol = Math.pow(10, value / 20);
   });
   
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "sw";
+  path[3] = "ducker";
+  path[4] = "sw";
   addParameter(path);
   setParameterType(path, 1);
   setParameterStates(path, [0, 1], ["Off", "On"]);
   setParameterValue(path, 0, true);
     
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "threshold";
+  path[3] = "ducker";
+  path[4] = "threshold";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -418,8 +417,8 @@ if(type != "input"){
   });
   setParameterValue(path, 0, true);
   
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "range";
+  path[3] = "ducker";
+  path[4] = "range";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, -inf, 20, 0.1, "dB");
@@ -432,8 +431,8 @@ if(type != "input"){
   });
   setParameterValue(path, 0, true);
   
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "attack";
+  path[3] = "ducker";
+  path[4] = "attack";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 20, 0.01, "s");
@@ -446,8 +445,8 @@ if(type != "input"){
   });
   setParameterValue(path, 0.5, true);
   
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "hold";
+  path[3] = "ducker";
+  path[4] = "hold";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 20, 0.01, "s");
@@ -460,8 +459,8 @@ if(type != "input"){
   });
   setParameterValue(path, 0.5, true);
   
-  path[idx + 1] = "ducker";
-  path[idx + 2] = "release";
+  path[3] = "ducker";
+  path[4] = "release";
   addParameter(path);
   setParameterType(path, 0);
   setParameterRange(path, 0, 20, 0.01, "s");
@@ -474,7 +473,7 @@ if(type != "input"){
   });
   setParameterValue(path, 0.5, true);
   
-  path.length = idx + 1;
+  path.length = 3;
 }
     channel.path[0].path[1].rms.pre[0] = new Rms();
     channel.path[0].path[1].rms.pre[1] = new Rms();
@@ -870,9 +869,13 @@ function processBus(type, n){
   channel.type.n.buffer[1] *= getParameter([type, n, "pan"]);
   setParameter([type, n, "rms", "post", "l"], Math.pow(10, channel.type.n.rms.post[0].calculate(buffer[0])) / 20);
   setParameter([type, n, "rms", "post", "r"], Math.pow(10, channel.type.n.rms.post[1].calculate(buffer[1])) / 20);
-  if(getParameter(["input", n, "afl"]) == 1){
+  if(getParameter([type, n, "afl"]) == 1){
     mon[0] += channel.type.n.buffer[0];
     mon[1] += channel.type.n.buffer[1];
+  }
+  if(getParameter(["main", "mon"]) == 1 && listen == 0){
+    mon[0] += channel."main".buffer[0];
+    mon[1] += channel."main".buffer[1];
   }
   if(type != "matrix"){
     for(i=1;i<=getParameter(["matrix", "count"]);i++){
