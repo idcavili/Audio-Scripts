@@ -984,4 +984,46 @@ function processSend(sample, chType, ch, sendType, send){
   channel.sendType.send.buffer[0] += samplea[0];
   channel.sendType.send.buffer[1] += samplea[1];
 }
- 
+function processTB(sample, type, n){
+  if getParamater([type, n, "tb", "ducker", "sw"]) == 1){
+    channel.type.n.tb.ducker.processSC(readSample(["tb"]));
+    sample[0] = channel.type.n.tb.ducker.process(sample[0]);
+    sample[1] = channel.type.n.tb.ducker.process(sample[1]);
+  }
+  sample[0] += readSample(["tb"]) * channel.type.n.tb.vol;
+  sample[1] += readSample(["tb"]) * channel.type.n.tb.vol;
+  return sample;
+}
+function onSample(){
+  for(i=1;i<=getParameter(["group", "count"]);i++){
+    channel."group".i.buffer[0] = 0.0;
+    channel."group".i.buffer[1] = 0.0;
+  }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    channel."aux".i.buffer[0] = 0.0;
+    channel."aux".i.buffer[1] = 0.0;
+  }
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    channel."matrix".i.buffer[0] = 0.0;
+    channel."matrix".i.buffer[1] = 0.0;
+  }
+  channel."main".0.buffer[0] = 0.0;
+  channel."main".0.buffer[1] = 0.0;
+  monBuffer[0] = 0.0;
+  monBuffer[1] = 0.0;
+  for(i=1;i<=getParameter(["input", "count"]);i++){
+    processInput(i);
+  }
+  for(i=1;i<=getParameter(["group", "count"]);i++){
+    processBus("group", i);
+  }
+  for(i=1;i<=getParameter(["aux", "count"]);i++){
+    processBus("aux", i);
+  }
+  processBus("main",0);
+  for(i=1;i<=getParameter(["matrix", "count"]);i++){
+    processBus("matrix", i);
+  }
+  writeSample(["mon", "l"], monBuffer[0]);
+  writeSample(["mon", "r"], monBuffer[1]);
+}
