@@ -4,6 +4,29 @@ var sostenuto = 0;
 var keys[];
 var voices[];
 
+function killVoice(voice){
+  voices[voice].vel = 0;
+  pitchEnv[voice].setStage(4);
+  filterEnv[voice].setStage(4);
+  ampEnv[voice].setStage(4);
+}
+function changeVoice(voice, pitch, vel){
+  voices[voice].vel = vel;
+  voices[voice].key = pitch;
+  voices[voice].targetPitch = microTune(pitch);
+  if(getParameter("portamento", "sw") == 1){
+    voices[voice].rate = (voices[voice].targetPitch - voices[voice].currentPitch) / portTime;
+  }
+  else{
+    voices[voice].currentPitch = voices[voice].targetPitch;
+  }
+  if(getParameter("legato") == 0){
+    pitchEnv[voice].setStage(0);
+    filterEnv[voice].setStage(0);
+    ampEnv[voice].setStage(0);
+  }
+}
+
 function onSample(){
   var events = getEvents("in");
   for(i=0;i<events.length;i++){
