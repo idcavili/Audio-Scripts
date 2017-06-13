@@ -154,9 +154,9 @@ function onSample(){
         }
         else{ //polyphonic
           var voice = -1;
-          for(i=0;i<getParameter("voices");i++){
-            if(voices[i].vel == 0 && ampEnv.atEnd()){
-              voice = i;
+          for(j=0;j<getParameter("voices");j++){
+            if(voices[j].vel == 0 && ampEnv.atEnd()){
+              voice = j;
               break;
             }
           }
@@ -176,8 +176,12 @@ function onSample(){
                 break;
              }
           }
+          if(getParameter(["portamento", "sw"]) == 1){
+            voices[voice].currentPitch = microTune(startPitch);
+          }
           triggerVoice(voice, events[i].data[0], vel);
           numVoices++;
+          startPitch = events[i].data[0];
         }
         break;
       case 0xa0: //polyAT
@@ -186,27 +190,27 @@ function onSample(){
       case 0xb0: //CC
         switch(events[i].data[0]){
           case 1:
-            mWheel = mWheel & 0b00000001111111;
-            mWheel = mWheel | events[i].data[1] << 7;
-            MW = map14bit(mWheel);
+            mWheelMSB = events[i].data[1];
+            //mWheel = mWheel | events[i].data[1] << 7;
+            MW = map14bit(mWheelMSB << 7 | mWheelLSB);
             break;
           case 2:
-            breath = breath & 0b00000001111111;
-            breath = breath | events[i].data[1] << 7;
-            BC = map14bit(breath);
+            breathMSB = events[i].data[1];
+            //breath = breath | events[i].data[1] << 7;
+            BC = map14bit(breathMSB << 7 | breathLSB);
             break;
           case 4:
-            foot = foot & 0b00000001111111;
-            foot = foot | events[i].data[1] << 7;
-            FC = map14bit(foot);
+            footMSB = events[i].data[1];
+            //foot = foot | events[i].data[1] << 7;
+            FC = map14bit(footMSB << 7 | footLSB);
             break;
           case 5:
             setParameter(["portamento", "time"], portMap.map(event[i].data[1]));
             break;
           case 11:
-            exp = exp & 0b00000001111111;
-            exp = exp | events[i].data[1] >> 7;
-            EP = map14bit(EP);
+            expMSB = events[i].data[1];
+            //exp = exp | events[i].data[1] >> 7;
+            EP = map14bit(expMSB << 7 | expLSB);
             break;
           case 64:
             if(events[i].data[1] >= 64){
@@ -214,21 +218,80 @@ function onSample(){
             }
             else{
               sustain = 0;
-              for(i=0;i<getParameter("voices");i++){
-                if(voices[i].sostenuto == 1 && sostenuto == 1){
+              for(j=0;j<getParameter("voices");j++){
+                if(voices[j].sostenuto == 1 && sostenuto == 1){
                   continue;
                 }
-                if(keys[voices[i].key] == 0){
-                  killVoice(i);
+                if(keys[voices[j].key] == 0){
+                  killVoice(j);
                 }
               }
-            }
             break;
           case 66:
             if(events[i].data[1] >= 64){
               sostenuto = 1;
             }
+            else{
+              sostenuto = 0;
+              if(sustain == 1){
+                continue;
+              }
+              for(j=0,j<getParameter("voices");j++){
+                if(keys[voices[j].key] == 0)){
+                  killVoice(j);
+                }
+              }
+            }
+            break;
+          case 84:
+            startPitch = events[i].data[1];
+            break;
+          case 88:
+            hrv = events[i].data[1];
+            break;
+          case 120:
+            for(j=0;j<getParameter("voices");j++){
+              killVoice(j);
+            }
+            break;
+          case 121:
+            for(j=0;j<=127;j++){
+              aTouch[j] = 0;
+            }
+            pBend = 0;
+            mWheelMSB = 0;
+            mWheelLSB = 0;
+            MW = 0;
+            breathMSB = 0;
+            breathLSB = 0;
+            BC = 0;
+            footMSB = 0;
+            footLSB = 0;
+            FC = 0;
+            expMSB = 0;
+            expLSB = 0;
+            EP = 0;
+            sustain = 0;
+            sustainOff();
+            setParameter(["portamento", "sw"], 0)
+            sostenuto = 0;
+            sostenutoOff();
+            setParameter(["legato"]), 0);
+            hrv = 0;
+            break;
+            }
+          case 0xd0: //monoAT
+            for(j=0;j<=127;i++){
+              aTouch[i] = events[i].data[1];
+            }
+            break;
+          case 0xe0:  //pitch bend
+            pBend = PBMap(events[i].data[0] << 7 | events[i].data[1]);
+            break;
+        }
             
+              
+                        
               
         
                                                 
