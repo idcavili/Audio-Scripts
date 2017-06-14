@@ -212,6 +212,26 @@ function onSample(){
             //exp = exp | events[i].data[1] >> 7;
             EP = map14bit(expMSB << 7 | expLSB);
             break;
+          case 33:
+            mWheelLSB = events[i].data[1];
+            //mWheel = mWheel | events[i].data[1] << 7;
+            MW = map14bit(mWheelMSB << 7 | mWheelLSB);
+            break;
+          case 34:
+            breathLSB = events[i].data[1];
+            //breath = breath | events[i].data[1] << 7;
+            BC = map14bit(breathMSB << 7 | breathLSB);
+            break;
+          case 36:
+            footLSB = events[i].data[1];
+            //foot = foot | events[i].data[1] << 7;
+            FC = map14bit(footMSB << 7 | footLSB);
+            break;
+          case 47:
+            expLSB = events[i].data[1];
+            //exp = exp | events[i].data[1] >> 7;
+            EP = map14bit(expMSB << 7 | expLSB);
+            break;
           case 64:
             if(events[i].data[1] >= 64){
               sustain = 1;
@@ -289,7 +309,12 @@ function onSample(){
             pBend = PBMap(events[i].data[0] << 7 | events[i].data[1]);
             break;
         }
-            
+        for(i=0;i<getParameter("voices");i++){
+          if(voices[voice].currentPitch != voices[voice].targetPitch && voices[voice].vel > 0){
+            voices[voice].currentPitch += voices[voice].rate;
+          }
+        }
+        
               
                         
               
