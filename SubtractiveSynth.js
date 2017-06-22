@@ -322,7 +322,12 @@ function onSample(){
             voices[voice].currentPitch += voices[voice].rate;
           }
         }
-        
+        for(i=0;i<getParameter("voices");i++){
+          var lfo = lfoClock[i].getPhase();
+          if(voices[i].velocity == 0 && ampEnv[i].atEnd()){
+            continue;
+          }
+          
               
                         
               
