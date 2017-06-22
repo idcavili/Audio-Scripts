@@ -182,6 +182,14 @@ function onSample(){
           triggerVoice(voice, events[i].data[0], vel);
           numVoices++;
           startPitch = events[i].data[0];
+          if(getParameter(["lfo", "mode"]) == 0 && numVoices == 1){
+            for(i=0;i<getParameter("voices");i++){
+              lfoClock[i].setPhase(getParameter(["lfo", "phase"]));
+            }
+          }
+          if(getParameter(["lfo", "mode"]) == 2){
+            lfoClock[voice].setPhase(getParameter(["lfo", "phase"]));
+          }
         }
         break;
       case 0xa0: //polyAT
